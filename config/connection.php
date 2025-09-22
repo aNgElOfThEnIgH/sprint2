@@ -1,19 +1,13 @@
 <?php
 
-  $host = "localhost";
-  $dbname = "agenda";
-  $user = "root";
-  $pass = "root";
+$servername = "localhost";
+$username = "root";
+$password = "Senai@118";
+$dbname = "empresa_x";
 
-  try {
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-    $conn = new PDO("mysql:host=$host;dbname=$dbname", $user, $pass);
-
-    // Ativar o modo de erros
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-  } catch(PDOException $e) {
-    // erro na conexão
-    $error = $e->getMessage();
-    echo "Erro: $error";
-  }
+if ($conn->connect_error) {
+  die("Conexão falhou: " . $conn->connect_error);
+}
+?>

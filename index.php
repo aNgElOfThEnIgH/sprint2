@@ -1,33 +1,41 @@
 <?php
   include_once("templates/header.php");
+  include_once("config/connection.php");
+
+  $sql = "SELECT f.id, f.nome, f.afastado, d.descricao AS departamento
+          FROM funcionarios f
+          JOIN departamentos d ON f.departamento_id = d.id";
+  $result = $conn->query($sql);
+  $funcionarios = $result->fetch_all(MYSQLI_ASSOC);
 ?>
   <div class="container">
-    <?php if(isset($printMsg) && $printMsg != ''): ?>
-      <p id="msg"><?= $printMsg ?></p>
-    <?php endif; ?>
-    <h1 id="main-title">Minha Agenda</h1>
-    <?php if(count($contacts) > 0): ?>
+    <h1 id="main-title">Funcionários</h1>
+    <a href="<?= $BASE_URL ?>create.php" class="btn btn-success mb-3">Novo Funcionário</a>
+    <a href="<?= $BASE_URL ?>departamentos.php" class="btn btn-info mb-3">Gerenciar Departamentos</a>
+    <?php if(count($funcionarios) > 0): ?>
       <table class="table" id="contacts-table">
         <thead>
           <tr>
-            <th scope="col">#</th>
-            <th scope="col">Nome</th>
-            <th scope="col">Telefone</th>
-            <th scope="col"></th>
+            <th>#</th>
+            <th>Nome</th>
+            <th>Afastado</th>
+            <th>Departamento</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          <?php foreach($contacts as $contact): ?>
+          <?php foreach($funcionarios as $func): ?>
             <tr>
-              <td scope="row" class="col-id"><?= $contact["id"] ?></td>
-              <td scope="row"><?= $contact["name"] ?></td>
-              <td scope="row"><?= $contact["phone"] ?></td>
+              <td><?= $func["id"] ?></td>
+              <td><?= $func["nome"] ?></td>
+              <td><?= $func["afastado"] == "sim" ? "Sim" : "Não" ?></td>
+              <td><?= $func["departamento"] ?></td>
               <td class="actions">
-                <a href="<?= $BASE_URL ?>show.php?id=<?= $contact["id"] ?>"><i class="fas fa-eye check-icon"></i></a>
-                <a href="<?= $BASE_URL ?>edit.php?id=<?= $contact["id"] ?>"><i class="far fa-edit edit-icon"></i></a>
-                <form class="delete-form" action="<?= $BASE_URL ?>/config/process.php" method="POST">
+                <a href="<?= $BASE_URL ?>show.php?id=<?= $func["id"] ?>"><i class="fas fa-eye check-icon"></i></a>
+                <a href="<?= $BASE_URL ?>edit.php?id=<?= $func["id"] ?>"><i class="far fa-edit edit-icon"></i></a>
+                <form class="delete-form" action="<?= $BASE_URL ?>config/process.php" method="POST" style="display:inline;">
                   <input type="hidden" name="type" value="delete">
-                  <input type="hidden" name="id" value="<?= $contact["id"] ?>">
+                  <input type="hidden" name="id" value="<?= $func["id"] ?>">
                   <button type="submit" class="delete-btn"><i class="fas fa-times delete-icon"></i></button>
                 </form>
               </td>
@@ -36,7 +44,7 @@
         </tbody>
       </table>
     <?php else: ?>  
-      <p id="empty-list-text">Ainda não há contatos na sua agenda, <a href="<?= $BASE_URL ?>create.php">clique aqui para adicionar</a>.</p>
+      <p id="empty-list-text">Ainda não há funcionários cadastrados, <a href="<?= $BASE_URL ?>create.php">clique aqui para adicionar</a>.</p>
     <?php endif; ?>
   </div>
 <?php
